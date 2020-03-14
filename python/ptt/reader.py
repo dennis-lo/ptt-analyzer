@@ -120,17 +120,17 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
             # Exit loop
             break
 
-    #if parsed_content and parsed_content['articles']:
-    #    # Retrieve articles
-    #    for article_path in parsed_content['articles'].keys():
-    #        # Retrieve article content
-    #        page_content = read_article(board_name, article_path)
+    if parsed_content and parsed_content['articles']:
+        # Retrieve articles
+        for article_path in parsed_content['articles'].keys():
+            # Retrieve article content
+            page_content = read_article(board_name, article_path)
 
-    #        # Parse HTML content
-    #        if page_content != None:
-    #            # Parse article
-    #            parsed_content = parser.parse_article(page_content, \
-    #                    parsed_content=parsed_content)
+            # Parse HTML content
+            if page_content != None:
+                # Parse article
+                parsed_content = parser.parse_article(page_content, \
+                        parsed_content=parsed_content, page_name=article_path)
 
     # Remove
     print(parsed_content)

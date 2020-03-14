@@ -21,8 +21,6 @@ Parsed content format:
     }
 """
 
-import re
-
 from .ptt_html_parser import PttHtmlParser
 
 class PttArticleParser(PttHtmlParser):
@@ -88,18 +86,23 @@ class PttArticleParser(PttHtmlParser):
 
     def handle_starttag(self, tag, attrs):
         """ Stores properties of start-tags """
-        super().handle_starttag(tag, attrs)
+        if self.flag_process:
+            super().handle_starttag(tag, attrs)
 
-        # Reuse handle_startendtag()
-        self.handle_startendtag(tag, attrs)
+            # Reuse handle_startendtag()
+            self.handle_startendtag(tag, attrs)
 
 
     def handle_endtag(self, tag):
         """ Looks for a certain types of end-tags """
         # Stop proceeding further if all comments have been processed
         if self.flag_process:
-            if self.parsed_tags and self.parsed_tags[-1] == 'div[class=push]':
+            if self.parsed_tags and \
+                    self.parsed_tags[-1].startswith('div[id=main-content'):
                 self.flag_process = False
+
+        # Remove tag from stack
+        super().handle_endtag(tag)
 
 
     def handle_data(self, data):

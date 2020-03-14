@@ -2,16 +2,16 @@
 
 Parsed content format:
     {
-        title:          Title of the board
-        page_num:       Current page number
+        title:              Title of the board
+        page_num:           Current page number
         articles: {
             <page name>: {
-                title:  Title of the article
-                author: Author (user name) of the article
-                date:   Published date of the article
+                title:      Title of the article
+                author:     Author (user name) of the article
+                date:       Published date of the article
             }
         }
-        count:          Num of articles retrieved
+        count:              Num of articles retrieved
     }
 """
 
@@ -39,6 +39,15 @@ class PttBoardParser(PttHtmlParser):
         else:
             # Init num of articles
             self.num_of_articles = 0
+
+
+    def add_article_element(self, name, value, flagInit=False):
+        """ Adds named value to article identified by page_name """
+        if self.page_name and name and value:
+            # Init dictionary if necessary
+            if flagInit:
+                self.parsed_content['articles'][self.page_name] = {}
+            self.parsed_content['articles'][self.page_name][name] = value
 
 
     def handle_starttag(self, tag, attrs):
@@ -74,15 +83,6 @@ class PttBoardParser(PttHtmlParser):
                 # Retrieve page number
                 if self.parsed_tags[-1].startswith('a'):
                     self.set_page_num(self.parsed_tags[-1])
-
-
-    def add_article_element(self, name, value, flagInit=False):
-        """ Adds named value to article identified by page_name """
-        if self.page_name and name and value:
-            # Init dictionary if necessary
-            if flagInit:
-                self.parsed_content['articles'][self.page_name] = {}
-            self.parsed_content['articles'][self.page_name][name] = value
 
 
     def add_article_author(self, author):
