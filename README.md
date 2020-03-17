@@ -7,4 +7,5 @@ TODO:
 - Add components to perform (rather simplified version of) text mining over the extracted content
   - Taggers, etc.
 - Possibility to offload tasks to individual process?
+  - Concurrency
 - Add components to visualize the results
