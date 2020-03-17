@@ -20,25 +20,14 @@ import re
 from .ptt_html_parser import PttHtmlParser
 
 class PttBoardParser(PttHtmlParser):
-    def __init__(self, parsed_content):
+    def __init__(self):
         super().__init__()
 
+        # Init num of articles
+        self.num_of_articles = 0
+
         # Pattern used to retrieve page name
-        self.p_page_name = re.compile(r'^.*?\/([^\/]+)\]$')
-
-        if parsed_content:
-            # Update parsed content dict
-            self.parsed_content = parsed_content
-
-            # Update num of articles
-            if 'count' in parsed_content:
-                self.num_of_articles = parsed_content['count']
-
-            else:
-                self.num_of_articles = 0
-        else:
-            # Init num of articles
-            self.num_of_articles = 0
+        self.p_page_name = re.compile(r'^.*?\/([^\/\]]+)\]?$')
 
 
     def add_article_element(self, name, value, flagInit=False):

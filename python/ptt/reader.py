@@ -4,6 +4,7 @@ import urllib.request
 
 from . import boards
 from parsers import parser
+from parsers import merger
 
 # Altered User-agent
 REQUEST_HEADERS = {
@@ -91,7 +92,7 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
         - Search with period
     """
     # Return dictionary
-    parsed_content = {}
+    ret_content = {}
 
     # Page number
     page = None
@@ -107,22 +108,24 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
         # Parse HTML content
         if page_content != None:
             # Parse index page
-            parsed_content = parser.parse_index(page_content, \
-                    parsed_content=parsed_content)
+            parsed_content = parser.parse_index(page_content)
+
+            # Merge results
+            merger.merge_index_pages(ret_content, parsed_content)
 
             # Update count
-            count_articles = parsed_content['count']
+            count_articles = ret_content['count']
 
             # Update (previous) page number
-            page = parsed_content['page_num'] - 1
+            page = ret_content['page_num'] - 1
 
         else:
             # Exit loop
             break
 
-    if parsed_content and parsed_content['articles']:
+    if ret_content and ret_content['articles']:
         # Retrieve articles
-        for article_path in parsed_content['articles'].keys():
+        for article_path in ret_content['articles'].keys():
             # Retrieve article content
             page_content = read_article(board_name, article_path)
 
@@ -130,8 +133,12 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
             if page_content != None:
                 # Parse article
                 parsed_content = parser.parse_article(page_content, \
-                        parsed_content=parsed_content, page_name=article_path)
+                        page_name=article_path)
 
-    # Remove
-    print(parsed_content)
+                # Merge results
+                merger.merge_article_content(ret_content['articles'], \
+                        parsed_content)
+
+    # Return parsed result
+    return ret_content
 
