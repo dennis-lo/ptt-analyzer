@@ -59,7 +59,7 @@ class Worker():
 
             except ValueError as err:
                 # Queue is closed
-                logging.error("Error while feeding task into queue:", err)
+                logging.error("Error while feeding task into queue: %s", err)
 
 
     def retrieve_task(self):
@@ -73,7 +73,8 @@ class Worker():
 
             except ValueError as err:
                 # Queue is closed
-                logging.error("Error while retrieving task from queue: " + err)
+                logging.error("Error while retrieving task from queue: %s", \
+                        err)
 
         # Return retrieved task
         return ret_task
@@ -81,7 +82,7 @@ class Worker():
 
     def run(self):
         """ Starts working as a workers """
-        logging.debug(f'[{self.name}] Start working ...')
+        logging.debug(f'[{self.name}] Starts working ...')
         # Indicate whether the process should remain running
         flag_continue = True
 
@@ -90,8 +91,12 @@ class Worker():
             in_task = self.retrieve_task()
 
             if in_task != None:
-                if in_task == Task.STOP:
-                    logging.debug(f'{self.name} Received STOP')
+                if not self.verify_task(in_task):
+                    # Invalid task
+                    logging.warning(f'[{self.name}] Invalid Task')
+
+                elif in_task == Task.STOP:
+                    logging.debug(f'[{self.name}] Received STOP')
 
                     # Stop worker
                     flag_continue = False
@@ -100,7 +105,7 @@ class Worker():
                     self.feed_task(in_task)
 
                 else:
-                    logging.debug(f'{self.name} Received task')
+                    logging.debug(f'[{self.name}] Received task')
 
                     # Indicate worker is busy
                     self.set_flag_working(True)
@@ -118,6 +123,13 @@ class Worker():
 
         # Return result
         return None
+
+
+    # Override this method if necessary
+    def verify_task(self, task):
+        """ Returns True if the task is valid """
+        return task == Task.STOP or isinstance(task, Task)
+
 
     # Override this method
     def handle_task(self, task):

@@ -82,9 +82,9 @@ def start_process(init_task):
                         workers_are_idle(parsers) and parse_queue.empty() and \
                         workers_are_idle(mergers) and merge_queue.empty():
                     # Indicate all workers should stop working
-                    html_req_queue.put(Task.STOP)
+                    #html_req_queue.put(Task.STOP)
                     parse_queue.put(Task.STOP)
-                    merge_queue.put(Task.STOP)
+                    #merge_queue.put(Task.STOP)
 
                     # Exit loop
                     flag_monitor = False
