@@ -71,7 +71,7 @@ class Worker():
             try:
                 ret_task = self.consuming_queue.get()
 
-            except ValueError:
+            except ValueError as err:
                 # Queue is closed
                 logging.error("Error while retrieving task from queue: " + err)
 
