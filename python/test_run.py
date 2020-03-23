@@ -20,7 +20,7 @@ def workers_are_idle(in_workers):
     ret_flag = True
     for worker in in_workers:
         if worker.is_working():
-            ret_flag = false
+            ret_flag = False
             break
     return ret_flag
 
