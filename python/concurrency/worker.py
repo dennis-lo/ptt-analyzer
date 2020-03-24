@@ -51,14 +51,20 @@ class Worker():
             for name in self.feeding_queues.keys():
                 self.feed_task(task, name)
 
-        elif name and self.feeding_queues and \
-                self.feeding_queues.get(name) and task:
-            # Try feeding task into queue
+        elif name and self.feeding_queues:
+            # Feed task to queue retrieved from map
+            self.put_task_to_queue(self.feeding_queues.get(name), task)
+
+
+    def put_task_to_queue(self, queue, task):
+        """ Puts task into queue """
+        if queue and task:
             try:
-                self.feeding_queues.get(name).put(task)
+                # Try feeding task into queue
+                queue.put(task)
 
             except ValueError as err:
-                # Queue is closed
+                # Queue might have been closed
                 logging.error("Error while feeding task into queue: %s", err)
 
 
@@ -78,6 +84,11 @@ class Worker():
 
         # Return retrieved task
         return ret_task
+
+
+    def return_task(self, task):
+        """ Returns task to the consuming queue """
+        self.put_task_to_queue(self.consuming_queue, task)
 
 
     def run(self):
@@ -102,7 +113,7 @@ class Worker():
                     flag_continue = False
 
                     # Return task to queue
-                    self.feed_task(in_task)
+                    self.return_task(in_task)
 
                 else:
                     logging.debug(f'[{self.name}] Received task')
