@@ -32,7 +32,7 @@ class Worker():
 
         # Check status after acquiring lock
         with self.status_lock:
-            retFlag = self.flag_working
+            ret_flag = self.flag_working
 
         # Return result
         return ret_flag
