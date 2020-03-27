@@ -6,5 +6,5 @@ class PttBoardReader(Worker):
 
     def handle_task(self, task):
         """ Handles task and returns results """
-        return None
+        return (False, None)
 

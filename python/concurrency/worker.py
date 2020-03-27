@@ -6,7 +6,7 @@ from threading import Lock
 from .task import Task
 
 class Worker():
-    def __init__(self, name, consuming_queue, feeding_queues={}, cv=None):
+    def __init__(self, name, consuming_queue, feeding_queues=None, cv=None):
         # Name of the worker
         self.name = name
 
@@ -15,6 +15,8 @@ class Worker():
 
         # Array of queues to which the worker should feed tasks
         self.feeding_queues = feeding_queues
+        if self.feeding_queues is None:
+            self.feeding_queues = {}
 
         # Working status
         self.flag_working = False
@@ -122,7 +124,7 @@ class Worker():
                     self.set_flag_working(True)
 
                     # Handle task
-                    self.handle_task(in_task)
+                    flag_res, res = self.handle_task(in_task)
 
                     # Indicate worker is idle again
                     self.set_flag_working(False)
