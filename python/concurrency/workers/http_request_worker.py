@@ -3,6 +3,7 @@
 import urllib.request
 
 from ..worker import Worker
+from ..task import Task
 from ..tasks.http_request_task import HttpRequestTask
 
 class HttlRequestWorker(Worker):

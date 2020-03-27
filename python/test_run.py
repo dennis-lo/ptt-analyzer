@@ -35,22 +35,22 @@ def start_process(init_task):
         executorCv = Condition()
 
         # Init queues:
-        #   - HTML request queue (Multiple workers)
+        #   - HTTP request queue (Multiple workers)
         #   - HTML content parsing queue (Multiple workers)
         #   - Parsed content merging queue (1 worker)
-        html_req_queue = Queue()
+        http_req_queue = Queue()
         parse_queue = Queue()
         merge_queue = Queue()
 
         # Init workers
         #   - HTML request workers
-        html_req_workers = [PttBoardReader(f'HtmlRequestWorker[{i}]', \
-                html_req_queue, {'parse_queue': parse_queue}, executorCv) \
+        http_req_workers = [PttBoardReader(f'HttpRequestWorker[{i}]', \
+                http_req_queue, {'parse_queue': parse_queue}, executorCv) \
                 for i in range(NUM_OF_HTML_REQ_WORKERS)]
 
         #   - HTML content parsers
         parsers = [HtmlContentParser(f'Parser[{i}]', parse_queue, {
-                    'html_req_queue': html_req_queue,
+                    'http_req_queue': http_req_queue,
                     'merge_queue': merge_queue
                 }, executorCv) \
                 for i in range(NUM_OF_PARSERS)]
@@ -62,10 +62,10 @@ def start_process(init_task):
         # Start process
         logging.info("[Executor] Arranging workers ...")
         futures = [executor.submit(worker.run) for worker in \
-                html_req_workers + parsers + mergers]
+                http_req_workers + parsers + mergers]
 
         # Initial task
-        html_req_queue.put(init_task)
+        http_req_queue.put(init_task)
 
         # Monitor workers and queues
         logging.info("[Executor] Monitoring workers ...")
@@ -77,12 +77,12 @@ def start_process(init_task):
 
                 logging.info("[Executor] Received notification ...")
                 # Examine HTML request workers
-                if workers_are_idle(html_req_workers) and \
-                        html_req_queue.empty() and \
+                if workers_are_idle(http_req_workers) and \
+                        http_req_queue.empty() and \
                         workers_are_idle(parsers) and parse_queue.empty() and \
                         workers_are_idle(mergers) and merge_queue.empty():
                     # Indicate all workers should stop working
-                    html_req_queue.put(Task.STOP)
+                    http_req_queue.put(Task.STOP)
                     parse_queue.put(Task.STOP)
                     merge_queue.put(Task.STOP)
 
