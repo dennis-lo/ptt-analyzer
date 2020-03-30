@@ -21,6 +21,9 @@ class Worker():
         # Working status
         self.flag_working = False
 
+        # Indicate whether activities should be logged
+        self.log_activity = True
+
         # Condition object
         self.cv = cv
 
@@ -48,26 +51,50 @@ class Worker():
 
     def feed_task(self, task, name=None):
         """ Feeds task into the specified queue """
+        # Indicate whether the task has been inserted to the queue
+        ret_flag = False
+
         if name == None:
             # Queue name is missing, loop through all feeding queues
             for name in self.feeding_queues.keys():
-                self.feed_task(task, name)
+                ret_flag = self.feed_task(task, name) or ret_flag
 
         elif name and self.feeding_queues:
             # Feed task to queue retrieved from map
-            self.put_task_to_queue(self.feeding_queues.get(name), task)
+            ret_flag = self.put_task_to_queue(self.feeding_queues.get(name), \
+                    task)
+
+        # Return result
+        return ret_flag
+
+
+    def notify_all(self):
+        """ Notifies all observers """
+        if self.cv != None:
+            with self.cv:
+                self.cv.notify_all()
 
 
     def put_task_to_queue(self, queue, task):
         """ Puts task into queue """
+        # Indicate whether the task has been inserted to the queue
+        ret_flag = False
+
         if queue and task:
             try:
+                if self.log_activity:
+                    logging.debug(f'[{self.name}] Feeding Task ...')
+
                 # Try feeding task into queue
                 queue.put(task)
+                ret_flag = True
 
             except ValueError as err:
                 # Queue might have been closed
                 logging.error("Error while feeding task into queue: %s", err)
+
+        # Return result
+        return ret_flag
 
 
     def retrieve_task(self):
@@ -90,12 +117,12 @@ class Worker():
 
     def return_task(self, task):
         """ Returns task to the consuming queue """
-        self.put_task_to_queue(self.consuming_queue, task)
+        return self.put_task_to_queue(self.consuming_queue, task)
 
 
     def run(self):
         """ Starts working as a workers """
-        logging.debug(f'[{self.name}] Starts working ...')
+        logging.info(f'[{self.name}] Starts working ...')
         # Indicate whether the process should remain running
         flag_continue = True
 
@@ -107,12 +134,16 @@ class Worker():
                 if not self.verify_task(in_task):
                     # Invalid task
                     logging.warning(f'[{self.name}] Invalid Task')
+                    self.notify_all()
 
                 elif in_task == Task.STOP:
                     logging.debug(f'[{self.name}] Received STOP')
 
                     # Stop worker
                     flag_continue = False
+
+                    # Stop logging activities
+                    self.log_activity = False
 
                     # Return task to queue
                     self.return_task(in_task)
@@ -126,13 +157,12 @@ class Worker():
                     # Handle task
                     flag_res, res = self.handle_task(in_task)
 
+                    # Notify observers
+                    if not flag_res:
+                        self.notify_all()
+
                     # Indicate worker is idle again
                     self.set_flag_working(False)
-
-                # Notify that task has been completed
-                if self.cv != None:
-                    with self.cv:
-                        self.cv.notify_all()
 
         # Return result
         return None
