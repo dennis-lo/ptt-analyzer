@@ -94,6 +94,11 @@ def start_process(init_task):
         res = [future.result() for future in futures]
         logging.info("[Executor] Exit")
 
+
+def test_start_process():
+    start_process(PttBoardRequest('Baseball'))
+
+
 if __name__ == '__main__':
     # Log debug messages
     logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s', \
@@ -103,5 +108,5 @@ if __name__ == '__main__':
     freeze_support()
 
     # Start process with a PTT Board Request
-    start_process(PttBoardRequest('Baseball'))
+    test_start_process()
 
