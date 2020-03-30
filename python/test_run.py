@@ -96,10 +96,6 @@ def start_process(init_task):
 
 
 def test_start_process():
-    start_process(PttBoardRequest('Baseball'))
-
-
-if __name__ == '__main__':
     # Log debug messages
     logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s', \
             level=logging.DEBUG)
@@ -107,6 +103,10 @@ if __name__ == '__main__':
     # Freeze support for Windows
     freeze_support()
 
+    start_process(PttBoardRequest('Baseball'))
+
+
+if __name__ == '__main__':
     # Start process with a PTT Board Request
     test_start_process()
 
