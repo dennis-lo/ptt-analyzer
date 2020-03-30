@@ -19,7 +19,7 @@ class HtmlContentParser(Worker):
         """ Handles task and returns results """
         # Return flag and tasks
         ret_flag = False
-        ret_res = None
+        parsed_content = None
 
         if isinstance(task, ParsePttBoardIndex):
             # Parse board index
@@ -30,5 +30,5 @@ class HtmlContentParser(Worker):
                 ret_flag = self.feed_task(MergeParsedContent(parsed_content), \
                         'merge_queue')
 
-        return (ret_flag, ret_res)
+        return (ret_flag, parsed_content)
 
