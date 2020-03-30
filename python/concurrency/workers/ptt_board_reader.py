@@ -23,5 +23,5 @@ class PttBoardReader(HttlRequestWorker):
             self.feed_task(ParsePttBoardIndex(ret_res), 'parse_queue')
 
         # Return result
-        return (ret_flag, None)
+        return (ret_flag, ret_res)
 

@@ -89,6 +89,9 @@ class Worker():
                 queue.put(task)
                 ret_flag = True
 
+                if self.log_activity:
+                    logging.debug(f'[{self.name}] Feeded Task to Queue ...')
+
             except ValueError as err:
                 # Queue might have been closed
                 logging.error("Error while feeding task into queue: %s", err)
@@ -163,6 +166,7 @@ class Worker():
 
                     # Indicate worker is idle again
                     self.set_flag_working(False)
+                    logging.debug(f'[{self.name}] Is Idle')
 
         # Return result
         return None
