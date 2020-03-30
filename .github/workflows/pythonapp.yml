@@ -34,4 +34,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest -s python/test_http_worker.py
+        pytest -s --log-cli-format="%(asctime)s %(levelname)8s: %(message)s" --log-cli-level=DEBUG python/test_http_worker.py
