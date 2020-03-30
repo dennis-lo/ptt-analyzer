@@ -1,7 +1,7 @@
 """ A module that helps parsing HTML content. """
 
-from .ptt_board_parser import PttBoardParser
-from .ptt_article_parser import PttArticleParser
+from parsers.ptt_board_parser import PttBoardParser
+from parsers.ptt_article_parser import PttArticleParser
 
 def parse_index(data: str):
     """ Returns information parsed from the content of an index page """

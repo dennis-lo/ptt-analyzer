@@ -2,6 +2,7 @@
 
 Parsed content format:
     {
+        name:               Name of the board
         title:              Title of the board
         page_num:           Current page number
         articles: {
@@ -73,6 +74,11 @@ class PttBoardParser(PttHtmlParser):
                 if self.parsed_tags[-1].startswith('a'):
                     self.set_page_num(self.parsed_tags[-1])
 
+            elif 'div[id=topbar,class=bbs-content]' in self.parsed_tags and \
+                    self.parsed_tags[-1].startswith('a[class=board'):
+                # Board name
+                self.add_board_name(data)
+
 
     def add_article_author(self, author):
         """ Specifies author of the article """
@@ -104,6 +110,12 @@ class PttBoardParser(PttHtmlParser):
 
             # Initialize dict for the article
             self.add_article_element('title', title, True)
+
+
+    def add_board_name(self, board_name):
+        """ Includes board name to result """
+        if board_name:
+            self.parsed_content['name'] = board_name
 
 
     def set_title(self, title):

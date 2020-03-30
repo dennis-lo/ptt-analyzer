@@ -16,6 +16,9 @@ KEY_CONTENT = 'content'
 # Dictionary key for num-of-articles
 KEY_COUNT = 'count'
 
+# Dictionary key for name
+KEY_NAME = 'name'
+
 # Dictionary key for page-number
 KEY_PAGE_NUM = 'page_num'
 
@@ -30,6 +33,10 @@ def merge_index_pages(src_index, in_index):
         in_index -  Input dictionary whose content will be merged into src_dict
     """
     if src_index != None and in_index:
+        # Assign board name
+        if KEY_NAME not in src_index:
+            src_index[KEY_NAME] = in_index.get(KEY_NAME)
+
         # Assign board title
         if KEY_BOARD_TITLE not in src_index:
             src_index[KEY_BOARD_TITLE] = in_index.get(KEY_BOARD_TITLE)

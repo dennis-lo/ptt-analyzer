@@ -3,8 +3,8 @@
 import urllib.request
 
 from . import boards
-from parsers import parser
-from parsers import merger
+from . import merger
+from . import parser
 
 # Altered User-agent
 REQUEST_HEADERS = {

@@ -44,19 +44,19 @@ def start_process(init_task):
 
         # Init workers
         #   - HTML request workers
-        http_req_workers = [PttBoardReader(f'HttpRequestWorker[{i}]', \
+        http_req_workers = [PttBoardReader(f'HttpRequestWorker-{i}', \
                 http_req_queue, {'parse_queue': parse_queue}, executorCv) \
                 for i in range(NUM_OF_HTML_REQ_WORKERS)]
 
         #   - HTML content parsers
-        parsers = [HtmlContentParser(f'Parser[{i}]', parse_queue, {
+        parsers = [HtmlContentParser(f'Parser-{i}', parse_queue, {
                     'http_req_queue': http_req_queue,
                     'merge_queue': merge_queue
                 }, executorCv) \
                 for i in range(NUM_OF_PARSERS)]
 
         #   - Parsed content merger
-        mergers = [ParsedContentMerger("Merger[0]", merge_queue, \
+        mergers = [ParsedContentMerger("Merger-0", merge_queue, \
                 cv=executorCv)]
 
         # Start process
@@ -73,6 +73,7 @@ def start_process(init_task):
         while flag_monitor:
             with executorCv:
                 # Wait for updates
+                logging.info("[Executor] Waiting for notification ...")
                 executorCv.wait()
 
                 logging.info("[Executor] Received notification ...")
@@ -95,7 +96,8 @@ def start_process(init_task):
 
 if __name__ == '__main__':
     # Log debug messages
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s', \
+            level=logging.DEBUG)
 
     # Freeze support for Windows
     freeze_support()
