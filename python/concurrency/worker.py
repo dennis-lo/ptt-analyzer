@@ -55,7 +55,7 @@ class Worker():
         # Indicate whether the task has been inserted to the queue
         ret_flag = False
 
-        if name == None:
+        if name is None:
             # Queue name is missing, loop through all feeding queues
             for name in self.feeding_queues.keys():
                 ret_flag = self.feed_task(task, name) or ret_flag
@@ -71,7 +71,7 @@ class Worker():
 
     def notify_all(self):
         """ Notifies all observers """
-        if self.cv != None:
+        if self.cv is not None:
             with self.cv:
                 self.cv.notify_all()
 
@@ -131,7 +131,7 @@ class Worker():
             # Try receive task from queue
             in_task = self.retrieve_task()
 
-            if in_task != None:
+            if in_task is not None:
                 if not self.verify_task(in_task):
                     # Invalid task
                     logging.warning(f'[{self.name}] Invalid Task')
@@ -164,7 +164,6 @@ class Worker():
 
                     # Indicate worker is idle again
                     self.set_flag_working(False)
-                    #logging.debug(f'[{self.name}] Is Idle')
 
         # Return result
         return None
