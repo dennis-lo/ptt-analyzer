@@ -5,6 +5,7 @@ from threading import Lock
 
 from .task import Task
 
+
 class Worker():
     def __init__(self, name, consuming_queue, feeding_queues=None, cv=None):
         # Name of the worker
@@ -89,9 +90,6 @@ class Worker():
                 queue.put(task)
                 ret_flag = True
 
-                if self.log_activity:
-                    logging.debug(f'[{self.name}] Feeded Task to Queue ...')
-
             except ValueError as err:
                 # Queue might have been closed
                 logging.error("Error while feeding task into queue: %s", err)
@@ -166,7 +164,7 @@ class Worker():
 
                     # Indicate worker is idle again
                     self.set_flag_working(False)
-                    logging.debug(f'[{self.name}] Is Idle')
+                    #logging.debug(f'[{self.name}] Is Idle')
 
         # Return result
         return None
@@ -182,4 +180,3 @@ class Worker():
     def handle_task(self, task):
         """ Handles task and returns results """
         pass
-

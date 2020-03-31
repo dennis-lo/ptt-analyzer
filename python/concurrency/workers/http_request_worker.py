@@ -19,7 +19,6 @@ class HttlRequestWorker(Worker):
 
         Arguments:
             task -      HTTP request task to be handled
-
         Returns:
             ret_flag -  Indicates whether the task is executed successfully
             ret_res -   Result of the execution
