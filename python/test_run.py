@@ -48,15 +48,15 @@ def start_process(init_task):
                 http_req_queue, {'parse_queue': parse_queue}, executorCv)
                 for i in range(NUM_OF_HTML_REQ_WORKERS)]
 
+        #   - Parsed content merger
+        workers += [ParsedContentMerger("Merger-0", merge_queue, cv=executorCv)]
+
         #   - HTML content parsers
         workers += [HtmlContentParser(f'Parser-{i}', parse_queue, {
                     'http_req_queue': http_req_queue,
                     'merge_queue': merge_queue
                 }, executorCv)
                 for i in range(NUM_OF_PARSERS)]
-
-        #   - Parsed content merger
-        workers += [ParsedContentMerger("Merger-0", merge_queue, cv=executorCv)]
 
         # Start process
         logging.info("[Executor] Arranging workers ...")
