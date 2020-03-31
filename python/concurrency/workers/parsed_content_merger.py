@@ -13,9 +13,7 @@ class ParsedContentMerger(Worker):
         return task == Task.STOP or isinstance(task, MergeParsedContent) and \
                 task.data
 
-
     def handle_task(self, task):
         """ Handles task and returns results """
         logging.debug("Parsed content: %s", task.data)
         return (False, None)
-

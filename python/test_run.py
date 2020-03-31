@@ -44,25 +44,23 @@ def start_process(init_task):
 
         # Init workers
         #   - HTML request workers
-        http_req_workers = [PttBoardReader(f'HttpRequestWorker-{i}', \
-                http_req_queue, {'parse_queue': parse_queue}, executorCv) \
+        workers = [PttBoardReader(f'HttpRequestWorker-{i}',
+                http_req_queue, {'parse_queue': parse_queue}, executorCv)
                 for i in range(NUM_OF_HTML_REQ_WORKERS)]
 
         #   - HTML content parsers
-        parsers = [HtmlContentParser(f'Parser-{i}', parse_queue, {
+        workers += [HtmlContentParser(f'Parser-{i}', parse_queue, {
                     'http_req_queue': http_req_queue,
                     'merge_queue': merge_queue
-                }, executorCv) \
+                }, executorCv)
                 for i in range(NUM_OF_PARSERS)]
 
         #   - Parsed content merger
-        mergers = [ParsedContentMerger("Merger-0", merge_queue, \
-                cv=executorCv)]
+        workers += [ParsedContentMerger("Merger-0", merge_queue, cv=executorCv)]
 
         # Start process
         logging.info("[Executor] Arranging workers ...")
-        futures = [executor.submit(worker.run) for worker in \
-                http_req_workers + parsers + mergers]
+        futures = [executor.submit(worker.run) for worker in workers]
 
         # Initial task
         http_req_queue.put(init_task)
@@ -78,10 +76,10 @@ def start_process(init_task):
 
                 logging.info("[Executor] Received notification ...")
                 # Examine HTML request workers
-                if workers_are_idle(http_req_workers) and \
+                if workers_are_idle(workers) and \
                         http_req_queue.empty() and \
-                        workers_are_idle(parsers) and parse_queue.empty() and \
-                        workers_are_idle(mergers) and merge_queue.empty():
+                        parse_queue.empty() and \
+                        merge_queue.empty():
                     # Indicate all workers should stop working
                     http_req_queue.put(Task.STOP)
                     parse_queue.put(Task.STOP)
@@ -97,7 +95,7 @@ def start_process(init_task):
 
 def test_start_process():
     # Log debug messages
-    logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s', \
+    logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s',
             level=logging.DEBUG)
 
     # Freeze support for Windows
