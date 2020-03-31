@@ -1,8 +1,11 @@
 """ A worker that merges parsed HTML content """
 
+import logging
+
 from ..task import Task
 from ..tasks.merge_parsed_content import MergeParsedContent
 from ..worker import Worker
+
 
 class ParsedContentMerger(Worker):
 
@@ -13,5 +16,5 @@ class ParsedContentMerger(Worker):
 
     def handle_task(self, task):
         """ Handles task and returns results """
-        print(task.data)
+        logging.debug("[%s] Parsed content: %s", self.name, task.data)
         return (False, None)
