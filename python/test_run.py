@@ -10,10 +10,10 @@ from concurrency.workers.parsed_content_merger import ParsedContentMerger
 from concurrency.workers.ptt_board_reader import PttBoardReader
 
 # Num of HTML request workers
-NUM_OF_HTML_REQ_WORKERS = 4
+NUM_OF_HTML_REQ_WORKERS = 3
 
 # Num of HTML content parsers
-NUM_OF_PARSERS = 4
+NUM_OF_PARSERS = 3
 
 def workers_are_idle(in_workers):
     """ Returns True if all workers are idel """
