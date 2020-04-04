@@ -5,7 +5,6 @@ import logging
 from ..task import Task
 from ..tasks.merge_ptt_content import MergePttContent
 from ..tasks.ptt_board_request import PttBoardRequest
-from ..worker import Worker
 from .parsed_content_merger import ParsedContentMerger
 import ptt.merger
 
@@ -25,7 +24,7 @@ class PttContentMerger(ParsedContentMerger):
                                 existing
         """
         super().__init__(name, consuming_queue, feeding_queues=feeding_queues,
-                cv=cv)
+                         cv=cv)
         self.min_article_num = min_article_num
 
     def verify_task(self, task):
@@ -50,8 +49,8 @@ class PttContentMerger(ParsedContentMerger):
                 page_num = self.merged_content['page_num'] - 1
 
                 # Retrieve list of articles from the previous page
-                self.feed_task(PttBoardRequest(self.merged_content['name'],
-                                               page_num),
+                self.feed_task(
+                    PttBoardRequest(self.merged_content['name'], page_num),
                     'http_req_queue')
 
                 # Indicate that the task has been handled properly
@@ -59,5 +58,5 @@ class PttContentMerger(ParsedContentMerger):
 
         # Subsequent request
         logging.debug("[%s] Merged content: %s", self.name,
-                self.merged_content)
+                      self.merged_content)
         return (ret_flag, None)

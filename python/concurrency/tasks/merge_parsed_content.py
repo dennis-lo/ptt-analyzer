@@ -2,6 +2,7 @@
 
 from ..task import Task
 
+
 class MergeParsedContent(Task):
     def __init__(self, data):
         """ Instantiation
@@ -11,4 +12,3 @@ class MergeParsedContent(Task):
         """
         super().__init__()
         self.data = data
-

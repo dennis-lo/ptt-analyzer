@@ -2,6 +2,7 @@
 
 from .parse_content_task import ParseContentTask
 
+
 class ParsePttBoardIndex(ParseContentTask):
     def __init__(self, data):
         """ Instantiation
@@ -10,4 +11,3 @@ class ParsePttBoardIndex(ParseContentTask):
             data -  Content to be parsed
         """
         super().__init__(data)
-

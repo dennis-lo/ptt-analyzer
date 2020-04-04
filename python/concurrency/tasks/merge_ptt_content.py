@@ -2,6 +2,7 @@
 
 from .merge_parsed_content import MergeParsedContent
 
+
 class MergePttContent(MergeParsedContent):
     def __init__(self, data):
         """ Instantiation
