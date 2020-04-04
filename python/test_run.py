@@ -6,8 +6,8 @@ from threading import Condition
 from concurrency.task import Task
 from concurrency.tasks.ptt_board_request import PttBoardRequest
 from concurrency.workers.html_content_parser import HtmlContentParser
-from concurrency.workers.parsed_content_merger import ParsedContentMerger
 from concurrency.workers.ptt_board_reader import PttBoardReader
+from concurrency.workers.ptt_content_merger import PttContentMerger
 
 # Num of HTML request workers
 NUM_OF_HTML_REQ_WORKERS = 3
@@ -25,7 +25,7 @@ def workers_are_idle(in_workers):
     return ret_flag
 
 
-def start_process(init_task):
+def start_process(board_name):
     """ Initializes executor, queues, and workers and starts process """
     # Init executer
     with ThreadPoolExecutor() as executor:
@@ -56,14 +56,15 @@ def start_process(init_task):
                 for i in range(NUM_OF_PARSERS)]
 
         #   - Parsed content merger
-        workers += [ParsedContentMerger("Merger-0", merge_queue, cv=executorCv)]
+        workers += [PttContentMerger("Merger-0", merge_queue,
+                {'http_req_queue': http_req_queue}, cv=executorCv)]
 
         # Start process
         logging.info("[Executor] Arranging workers ...")
         futures = [executor.submit(worker.run) for worker in workers]
 
         # Initial task
-        http_req_queue.put(init_task)
+        http_req_queue.put(PttBoardRequest(board_name))
 
         # Monitor workers and queues
         logging.info("[Executor] Monitoring workers ...")
@@ -101,7 +102,7 @@ def test_start_process():
     # Freeze support for Windows
     freeze_support()
 
-    start_process(PttBoardRequest('Baseball'))
+    start_process('Baseball')
 
 
 if __name__ == '__main__':

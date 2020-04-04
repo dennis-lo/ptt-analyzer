@@ -30,6 +30,8 @@ class PttBoardParser(PttHtmlParser):
         # Pattern used to retrieve page name
         self.p_page_name = re.compile(r'^.*?\/([^\/\]]+)\]?$')
 
+        # Specify the type of parsed content
+        self.parsed_content['type'] = 'board'
 
     def add_article_element(self, name, value, flagInit=False):
         """ Adds named value to article identified by page_name """

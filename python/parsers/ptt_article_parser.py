@@ -26,6 +26,8 @@ class PttArticleParser(PttHtmlParser):
         self.page_name = page_name
         self.parsed_content[self.page_name] = {}
 
+        # Specify the type of parsed content
+        self.parsed_content['type'] = 'article'
 
     def add_article_element(self, name, value):
         """ Adds named value to article """

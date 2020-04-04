@@ -1,7 +1,7 @@
 """ A worker that parses HTML content """
 
 from ..task import Task
-from ..tasks.merge_parsed_content import MergeParsedContent
+from ..tasks.merge_ptt_content import MergePttContent
 from ..tasks.parse_content_task import ParseContentTask
 from ..tasks.parse_ptt_board_index import ParsePttBoardIndex
 from ..worker import Worker
@@ -27,7 +27,7 @@ class HtmlContentParser(Worker):
 
             # Feed parsed content to merger
             if parsed_content:
-                ret_flag = self.feed_task(MergeParsedContent(parsed_content),
+                ret_flag = self.feed_task(MergePttContent(parsed_content),
                         'merge_queue')
 
         return (ret_flag, parsed_content)
