@@ -8,6 +8,5 @@ TODO:
 - Add components to perform (rather simplified version of) text mining over the extracted content
   - Taggers, etc.
 - Concurrency
-  - Offload I/O tasks to individual workers
   - Alternative design with up to 2 task queues
 - Add components to visualize the results
