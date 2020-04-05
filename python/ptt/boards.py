@@ -9,6 +9,7 @@ URL_MAPPINGS = {
     'SoftbankHawk': 'https://www.ptt.cc/bbs/SoftbankHawk/'
 }
 
+
 def get_url(name: str, page: int = None, article_path: str = None) -> str:
     """ Returns the mapped URL of the board
 
@@ -23,19 +24,18 @@ def get_url(name: str, page: int = None, article_path: str = None) -> str:
     return_url = URL_MAPPINGS.get(name)
 
     # Determine the path of the page under the mapped directory
-    if return_url != None:
-        if article_path != None:
+    if return_url is not None:
+        if article_path is not None:
             # Article path provided, append
             return_url += article_path
 
-        elif page != None:
+        elif page is not None:
             # Page number provided, insert
             return_url += 'index' + str(page) + '.html'
 
         else:
             # Page number not provided, visit index page directly
-            return_url += 'index.html' 
+            return_url += 'index.html'
 
     # Mapped URL
     return return_url
-

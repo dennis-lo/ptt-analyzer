@@ -2,12 +2,12 @@
 
 from html.parser import HTMLParser
 
+
 class PttHtmlParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.parsed_tags = []
         self.parsed_content = {}
-
 
     def handle_starttag(self, tag, attrs):
         """ Handles start-tag
@@ -41,20 +41,17 @@ class PttHtmlParser(HTMLParser):
         # Append name to list
         self.parsed_tags.append(element_name)
 
-
     def handle_endtag(self, tag):
         """ Pops last parsed element if it matches the end-tag """
         if bool(self.parsed_tags):
             if self.parsed_tags[-1].startswith(tag):
                 self.parsed_tags.pop()
 
-
-    def parse(self, data : str):
+    def parse(self, data: str):
         """ Returns parsed information. """
         # Feed text to parser
-        if data != None:
+        if data is not None:
             super().feed(data)
 
         # Returned parsed data
         return self.parsed_content
-

@@ -15,6 +15,7 @@ Parsed content format:
 
 from .ptt_html_parser import PttHtmlParser
 
+
 class PttArticleParser(PttHtmlParser):
     def __init__(self, page_name: str):
         super().__init__()
@@ -35,7 +36,6 @@ class PttArticleParser(PttHtmlParser):
             # Assign named value
             self.parsed_content[self.page_name][name] = value
 
-
     def append_article_element(self, name, value):
         """ Appends to named value of the article """
         if self.flag_process and self.page_name and name and value:
@@ -46,7 +46,6 @@ class PttArticleParser(PttHtmlParser):
             # Append to the end of list
             self.parsed_content[self.page_name][name].append(value)
 
-
     def handle_startendtag(self, tag, attrs):
         """ Stores properties of start-end-tags """
         if self.flag_process:
@@ -55,9 +54,8 @@ class PttArticleParser(PttHtmlParser):
                     dict_attrs = dict(attrs)
                     if 'content' in dict_attrs:
                         # Content
-                        self.add_article_element('content', \
-                                dict_attrs['content'])
-
+                        self.add_article_element('content',
+                                                 dict_attrs['content'])
 
     def handle_starttag(self, tag, attrs):
         """ Stores properties of start-tags """
@@ -66,7 +64,6 @@ class PttArticleParser(PttHtmlParser):
 
             # Reuse handle_startendtag()
             self.handle_startendtag(tag, attrs)
-
 
     def handle_endtag(self, tag):
         """ Looks for a certain types of end-tags """
@@ -78,7 +75,6 @@ class PttArticleParser(PttHtmlParser):
 
         # Remove tag from stack
         super().handle_endtag(tag)
-
 
     def handle_data(self, data):
         """ Stores parsed data into dictionary. """
@@ -98,6 +94,5 @@ class PttArticleParser(PttHtmlParser):
                         self.article_comment['dateTime'] = data.strip()
 
                         # Add comment to list
-                        self.append_article_element('comments', \
-                                self.article_comment)
-
+                        self.append_article_element('comments',
+                                                    self.article_comment)

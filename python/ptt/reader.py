@@ -11,6 +11,7 @@ REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
 }
 
+
 def read_html_content(page_url: str) -> str:
     """ Retrieves content of the specified page
 
@@ -48,7 +49,7 @@ def read_index_page(board_name: str, page: int = None) -> str:
     # Retrieve URL of the index page
     page_url = boards.get_url(board_name, page=page)
 
-    if page_url != None:
+    if page_url is not None:
         ret_content = read_html_content(page_url)
 
     # Return result
@@ -69,7 +70,7 @@ def read_article(board_name: str, article_path: str) -> str:
     # Retrieve URL of the article
     page_url = boards.get_url(board_name, article_path=article_path)
 
-    if page_url != None:
+    if page_url is not None:
         ret_content = read_html_content(page_url)
 
     # Return result
@@ -106,7 +107,7 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
         page_content = read_index_page(board_name, page=page)
 
         # Parse HTML content
-        if page_content != None:
+        if page_content is not None:
             # Parse index page
             parsed_content = parser.parse_index(page_content)
 
@@ -130,15 +131,14 @@ def read_board(board_name: str, min_count: int = 30, start_date=None):
             page_content = read_article(board_name, article_path)
 
             # Parse HTML content
-            if page_content != None:
+            if page_content is not None:
                 # Parse article
-                parsed_content = parser.parse_article(page_content, \
-                        page_name=article_path)
+                parsed_content = parser.parse_article(page_content,
+                                                      page_name=article_path)
 
                 # Merge results
-                merger.merge_article_content(ret_content['articles'], \
-                        parsed_content)
+                merger.merge_article_content(ret_content['articles'],
+                                             parsed_content)
 
     # Return parsed result
     return ret_content
-

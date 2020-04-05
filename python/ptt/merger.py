@@ -25,6 +25,7 @@ KEY_PAGE_NUM = 'page_num'
 # Dictionary key for board-title
 KEY_BOARD_TITLE = 'title'
 
+
 def merge_index_pages(src_index, in_index):
     """ Merges parsed content of two different index pages.
 
@@ -32,7 +33,7 @@ def merge_index_pages(src_index, in_index):
         src_index - Base dictionary into which the input will be merged
         in_index -  Input dictionary whose content will be merged into src_dict
     """
-    if src_index != None and in_index:
+    if src_index is not None and in_index:
         # Assign board name
         if KEY_NAME not in src_index:
             src_index[KEY_NAME] = in_index.get(KEY_NAME)
@@ -53,7 +54,7 @@ def merge_index_pages(src_index, in_index):
         in_articles = in_index.get(KEY_ARTICLES)
 
         # Merge list of articles
-        if in_articles != None:
+        if in_articles is not None:
             for page_name in in_articles.keys():
                 if in_articles[page_name]:
                     src_index[KEY_ARTICLES][page_name] = in_articles[page_name]
@@ -73,7 +74,7 @@ def merge_article_content(src_articles, in_article):
         src_articles -  List of articles into which the content will be merged
         in_article -    Parsed content of an article
     """
-    if src_articles != None and in_article:
+    if src_articles is not None and in_article:
         for page_name in in_article.keys():
             # Article content
             dict_article = in_article[page_name]
@@ -87,4 +88,3 @@ def merge_article_content(src_articles, in_article):
             if KEY_COMMENTS in dict_article:
                 src_articles[page_name][KEY_COMMENTS] = \
                         dict_article.get(KEY_COMMENTS)
-

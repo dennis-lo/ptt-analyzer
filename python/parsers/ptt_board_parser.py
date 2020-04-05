@@ -20,6 +20,7 @@ import re
 
 from .ptt_html_parser import PttHtmlParser
 
+
 class PttBoardParser(PttHtmlParser):
     def __init__(self):
         super().__init__()
@@ -41,7 +42,6 @@ class PttBoardParser(PttHtmlParser):
                 self.parsed_content['articles'][self.page_name] = {}
             self.parsed_content['articles'][self.page_name][name] = value
 
-
     def handle_starttag(self, tag, attrs):
         """ Handles start-tag """
         super().handle_starttag(tag, attrs)
@@ -49,7 +49,6 @@ class PttBoardParser(PttHtmlParser):
         # Reset page name if tag <div class="title"> is found
         if tag == 'div' and ('class', 'title') in attrs:
             self.page_name = None
-
 
     def handle_data(self, data):
         """ Stores parsed data into dictionary. """
@@ -81,17 +80,14 @@ class PttBoardParser(PttHtmlParser):
                 # Board name
                 self.add_board_name(data)
 
-
     def add_article_author(self, author):
         """ Specifies author of the article """
         self.add_article_element('author', author)
-
 
     def add_article_date(self, date):
         """ Specifies date of the article """
         if date:
             self.add_article_element('date', date.strip())
-
 
     def add_article_title(self, title):
         """ Adds article title to list """
@@ -113,17 +109,14 @@ class PttBoardParser(PttHtmlParser):
             # Initialize dict for the article
             self.add_article_element('title', title, True)
 
-
     def add_board_name(self, board_name):
         """ Includes board name to result """
         if board_name:
             self.parsed_content['name'] = board_name
 
-
     def set_title(self, title):
         """ Stores the title of the board """
         self.parsed_content['title'] = title
-
 
     def set_page_num(self, element_name):
         """ Determines page number """
@@ -133,4 +126,3 @@ class PttBoardParser(PttHtmlParser):
         # Store page number if retrieved successfully
         if m:
             self.parsed_content['page_num'] = int(m.group(1)) + 1
-
