@@ -62,8 +62,8 @@ class Worker():
 
         elif name and self.feeding_queues:
             # Feed task to queue retrieved from map
-            ret_flag = self.put_task_to_queue(self.feeding_queues.get(name), \
-                    task)
+            ret_flag = self.put_task_to_queue(self.feeding_queues.get(name),
+                                              task)
 
         # Return result
         return ret_flag
@@ -109,8 +109,8 @@ class Worker():
 
             except ValueError as err:
                 # Queue is closed
-                logging.error("Error while retrieving task from queue: %s", \
-                        err)
+                logging.error("Error while retrieving task from queue: %s",
+                              err)
 
         # Return retrieved task
         return ret_task
@@ -127,6 +127,9 @@ class Worker():
         # Indicate whether the process should remain running
         flag_continue = True
 
+        # Final result
+        ret_res = None
+
         while flag_continue:
             # Try receive task from queue
             in_task = self.retrieve_task()
@@ -138,7 +141,7 @@ class Worker():
                     self.notify_all()
 
                 elif in_task == Task.STOP:
-                    logging.debug(f'[{self.name}] Received STOP')
+                    logging.info(f'[{self.name}] Received STOP')
 
                     # Stop worker
                     flag_continue = False
@@ -150,23 +153,28 @@ class Worker():
                     self.return_task(in_task)
 
                 else:
-                    logging.debug(f'[{self.name}] Received task')
+                    logging.info(f'[{self.name}] Received task')
 
                     # Indicate worker is busy
                     self.set_flag_working(True)
 
-                    # Handle task
-                    flag_res, res = self.handle_task(in_task)
+                    try:
+                        # Handle task
+                        flag_res, ret_res = self.handle_task(in_task)
 
-                    # Notify observers
-                    if not flag_res:
-                        self.notify_all()
+                    except Exception as err:
+                        logging.error("Error while handling task: %s", err)
+
+                    finally:
+                        # Notify observers
+                        if not flag_res:
+                            self.notify_all()
 
                     # Indicate worker is idle again
                     self.set_flag_working(False)
 
         # Return result
-        return None
+        return ret_res
 
 
     # Override this method if necessary

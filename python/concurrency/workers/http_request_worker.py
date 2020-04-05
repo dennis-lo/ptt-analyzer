@@ -6,13 +6,13 @@ from ..worker import Worker
 from ..task import Task
 from ..tasks.http_request_task import HttpRequestTask
 
+
 class HttlRequestWorker(Worker):
 
     def verify_task(self, task):
         """ Returns True if the task is valid """
         return task == Task.STOP or isinstance(task, HttpRequestTask) and \
                 task.url
-
 
     def handle_task(self, task):
         """ Handles task and returns results
@@ -38,4 +38,3 @@ class HttlRequestWorker(Worker):
 
         # Return result
         return (ret_flag, ret_res)
-

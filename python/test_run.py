@@ -6,7 +6,7 @@ from threading import Condition
 from concurrency.task import Task
 from concurrency.tasks.ptt_board_request import PttBoardRequest
 from concurrency.workers.html_content_parser import HtmlContentParser
-from concurrency.workers.ptt_board_reader import PttBoardReader
+from concurrency.workers.ptt_content_reader import PttContentReader
 from concurrency.workers.ptt_content_merger import PttContentMerger
 
 # Num of HTML request workers
@@ -44,7 +44,7 @@ def start_process(board_name):
 
         # Init workers
         #   - HTML request workers
-        workers = [PttBoardReader(f'HttpRequestWorker-{i}',
+        workers = [PttContentReader(f'HttpRequestWorker-{i}',
                 http_req_queue, {'parse_queue': parse_queue}, executorCv)
                 for i in range(NUM_OF_HTML_REQ_WORKERS)]
 
@@ -90,14 +90,18 @@ def start_process(board_name):
                     flag_monitor = False
 
         # Wait until all workers have returned results
-        res = [future.result() for future in futures]
-        logging.info("[Executor] Exit")
+        lst_res = [future.result() for future in futures]
 
+        # Collect results
+        for res in lst_res:
+            if res:
+                logging.info("[Executor] Result: %s", res)
+        logging.info("[Executor] Exit")
 
 def test_start_process():
     # Log debug messages
     logging.basicConfig(format='%(asctime)s %(levelname)9s: %(message)s',
-            level=logging.DEBUG)
+                        level=logging.INFO)
 
     # Freeze support for Windows
     freeze_support()
@@ -108,4 +112,3 @@ def test_start_process():
 if __name__ == '__main__':
     # Start process with a PTT Board Request
     test_start_process()
-

@@ -3,6 +3,7 @@
 from ..task import Task
 from ..tasks.merge_ptt_content import MergePttContent
 from ..tasks.parse_content_task import ParseContentTask
+from ..tasks.parse_ptt_article import ParsePttArticle
 from ..tasks.parse_ptt_board_index import ParsePttBoardIndex
 from ..worker import Worker
 import ptt.parser
@@ -25,9 +26,15 @@ class HtmlContentParser(Worker):
             # Parse board index
             parsed_content = ptt.parser.parse_index(task.data)
 
-            # Feed parsed content to merger
-            if parsed_content:
-                ret_flag = self.feed_task(MergePttContent(parsed_content),
-                        'merge_queue')
+        elif isinstance(task, ParsePttArticle):
+            # Parse article
+            parsed_content = ptt.parser.parse_article(
+                task.data,
+                task.article_path)
 
-        return (ret_flag, parsed_content)
+        # Feed parsed content to merger
+        if parsed_content:
+            ret_flag = self.feed_task(MergePttContent(parsed_content),
+                                     'merge_queue')
+
+        return (ret_flag, None)

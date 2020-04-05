@@ -4,6 +4,7 @@ import logging
 
 from ..task import Task
 from ..tasks.merge_ptt_content import MergePttContent
+from ..tasks.ptt_article_request import PttArticleRequest
 from ..tasks.ptt_board_request import PttBoardRequest
 from .parsed_content_merger import ParsedContentMerger
 import ptt.merger
@@ -35,6 +36,7 @@ class PttContentMerger(ParsedContentMerger):
     def handle_task(self, task):
         """ Handles task and returns results """
         ret_flag = False
+        ret_res = None
 
         # Determine type of content
         if task.data['type'] == 'board':
@@ -44,19 +46,39 @@ class PttContentMerger(ParsedContentMerger):
             # Update count
             count_articles = self.merged_content['count']
 
+            # Board name
+            board_name = self.merged_content['name']
+
             if count_articles < self.min_article_num:
                 # Previous page number
                 page_num = self.merged_content['page_num'] - 1
 
                 # Retrieve list of articles from the previous page
                 self.feed_task(
-                    PttBoardRequest(self.merged_content['name'], page_num),
+                    PttBoardRequest(board_name, page_num),
                     'http_req_queue')
 
                 # Indicate that the task has been handled properly
                 ret_flag = True
 
+            elif self.merged_content['articles']:
+                # Proceed and retrieve articles
+                for article_page in self.merged_content['articles'].keys():
+                    self.feed_task(PttArticleRequest(board_name, article_page),
+                                   'http_req_queue')
+
+                # Indicate that the task has been handled properly
+                ret_flag = True
+
+        elif task.data['type'] == 'article':
+            # Merge parsed content of an article
+            ptt.merger.merge_article_content(self.merged_content['articles'],
+                                             task.data)
+
+            # Return merged content
+            ret_res = self.merged_content
+
         # Subsequent request
         logging.debug("[%s] Merged content: %s", self.name,
                       self.merged_content)
-        return (ret_flag, None)
+        return (ret_flag, ret_res)
